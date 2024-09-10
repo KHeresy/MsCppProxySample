@@ -2,50 +2,47 @@
 #include <string>
 #include <vector>
 
-// define interface
-class IShape
-{
-public:
-	virtual ~IShape() = default;
-	virtual void Draw() const = 0;
-};
+#include "proxy.h"
 
 // implement a box
-class Box : public IShape
+class Box
 {
 public:
 	virtual ~Box() = default;
 
-	virtual void Draw() const override
+	virtual void Draw() const
 	{
 		std::cout << "Draw Box\n";
 	}
 };
 
 // implement a triangle
-class Triangle : public IShape
+class Triangle
 {
 public:
 	virtual ~Triangle() = default;
 
-	virtual void Draw() const override
+	virtual void Draw() const
 	{
 		std::cout << "Draw Triangle\n";
 	}
 };
 
+// define interface with proxy
+PRO_DEF_MEM_DISPATCH(ProxyDraw, Draw);
+
+struct ShapeProxy : pro::facade_builder
+	::add_convention<ProxyDraw, void()const>
+	::build {};
+
 int main()
 {
 	// build list
-	std::vector<IShape*> vObjects;
-	vObjects.push_back(new Box());
-	vObjects.push_back(new Triangle());
+	std::vector<pro::proxy<ShapeProxy>> vObjects;
+	vObjects.push_back(pro::make_proxy<ShapeProxy,Box>());
+	vObjects.push_back(pro::make_proxy<ShapeProxy,Triangle>());
 
-	// draw all obects
-	for (const auto pObj : vObjects)
+	// draw all objects
+	for (const auto& pObj : vObjects)
 		pObj->Draw();
-
-	// release
-	for (auto pObj : vObjects)
-		delete pObj;
 }
