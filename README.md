@@ -2,4 +2,4 @@
 
 This repo is the sample code of [Microsoft Proxy library](https://github.com/microsoft/proxy).
 
-This branch is used to show how to replace inheritance with proxy.
+This branch is used to benchmark between inheritance and proxy.
